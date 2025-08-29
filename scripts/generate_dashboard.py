@@ -497,7 +497,7 @@ def generate_html_dashboard(dashboard_data, current_status=None):
         function getFilteredData() {{
             console.log("getFilteredData() called");
             const startDate = document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null;
-            const endDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value) : null;
+            const endDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value).setSeconds(59) : null;
             const minResponseTime = parseFloat(document.getElementById('minResponseTime').value);
             const maxResponseTime = parseFloat(document.getElementById('maxResponseTime').value);
             const minFailedSiteCount = parseInt(document.getElementById('minFailedSiteCount').value);
