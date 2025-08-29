@@ -535,16 +535,19 @@ def generate_html_dashboard(dashboard_data, current_status=None):
             const maxDate = timestampToUTC(new Date(Math.max(...timestamps)));
             document.getElementById('startDate').value = formatDateForInput(minDate);
             document.getElementById('endDate').value = formatDateForInput(maxDate);
+            applyFilters();
         }}
         
         function resetResponseTimeRange() {{
             document.getElementById('minResponseTime').value = '';
             document.getElementById('maxResponseTime').value = '';
+            applyFilters();
         }}
         
         function resetSiteCountRange() {{
             document.getElementById('minFailedSiteCount').value = '';
             document.getElementById('maxFailedSiteCount').value = '';
+            applyFilters();
         }}
         
         function resetAllFilters() {{
@@ -552,7 +555,6 @@ def generate_html_dashboard(dashboard_data, current_status=None):
             resetTimeRange();
             resetResponseTimeRange();
             resetSiteCountRange();
-            applyFilters();
         }}
         
         function applyFilters() {{
