@@ -495,7 +495,6 @@ def generate_html_dashboard(dashboard_data, current_status=None):
         }}
         
         function getFilteredData() {{
-            console.log("getFilteredData() called");
             const startDate = document.getElementById('startDate').value ? new Date(document.getElementById('startDate').value) : null;
             const endDate = document.getElementById('endDate').value ? new Date(document.getElementById('endDate').value).setSeconds(59) : null;
             const minResponseTime = parseFloat(document.getElementById('minResponseTime').value);
@@ -529,7 +528,6 @@ def generate_html_dashboard(dashboard_data, current_status=None):
         }}
         
         function resetTimeRange() {{
-            console.log("resetTimeRange() called");
             const timestamps = dashboardData.timeline.map(d => new Date(d.timestamp));
             const minDate = timestampToUTC(new Date(Math.min(...timestamps)));
             const maxDate = timestampToUTC(new Date(Math.max(...timestamps)));
@@ -551,14 +549,12 @@ def generate_html_dashboard(dashboard_data, current_status=None):
         }}
         
         function resetAllFilters() {{
-            console.log("resetAllFilters() called");
             resetTimeRange();
             resetResponseTimeRange();
             resetSiteCountRange();
         }}
         
         function applyFilters() {{
-            console.log("applyFilters() called");
             const filteredData = getFilteredData();
             updateCharts(filteredData);
         }}
