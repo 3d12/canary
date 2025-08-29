@@ -267,7 +267,7 @@ def write_github_summary(results, failed_checks):
 def send_email_alert(failed_checks, config):
     """Send email alert for failed checks"""
     smtp_server = os.getenv('SMTP_SERVER')
-    smtp_port = int(os.getenv('SMTP_PORT', '587'))
+    smtp_port = os.getenv('SMTP_PORT')
     smtp_username = os.getenv('SMTP_USERNAME')
     smtp_password = os.getenv('SMTP_PASSWORD')
     
@@ -307,7 +307,7 @@ def send_email_alert(failed_checks, config):
         msg.attach(MIMEText(body, 'plain'))
         
         # Send email
-        server = smtplib.SMTP(smtp_server, smtp_port)
+        server = smtplib.SMTP(smtp_server, int(smtp_port))
         server.starttls()
         server.login(smtp_username, smtp_password)
         server.send_message(msg)
