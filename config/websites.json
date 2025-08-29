@@ -2,7 +2,7 @@
   "websites": [
     {
       "name": "Github",
-      "url": "http//github.com",
+      "url": "http://github.com",
       "timeout": 10,
       "expected_status": 200,
       "content_keywords": []
