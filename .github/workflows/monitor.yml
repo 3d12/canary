@@ -1,0 +1,97 @@
+name: Canary
+
+on:
+  schedule:
+    # Uncomment one of these:
+    #- cron: '*/15 * * * *'    # Run every 15 minutes, approx 2880 mins/month
+    #- cron: '*/20 * * * *'   # Run every 20 minutes, approx 2160 mins/month
+    #- cron: '*/30 * * * *'   # Run every 30 minutes, approx 1440 mins/month
+    #- cron: '0 * * * *'      # Run every hour, approx 720 mins/month
+    #- cron: '0 */2 * * *'    # Run every 2 hours, approx 360 mins/month
+    - cron: '0 3 * * *'      # Run at 3:00 every day, approx 30 mins/month
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .
+
+    # Restore historical data from cache
+    - name: Restore monitoring cache
+      uses: actions/cache/restore@v4
+      id: cache-restore
+      with:
+        path: scripts/cache
+        key: monitoring-data-${{ github.run_number }}
+        restore-keys: |
+          monitoring-data-
+
+    - name: Check cache status
+      run: |
+        echo "Cache hit: ${{ steps.cache-restore.outputs.cache-hit }}"
+        echo "Cache key used: ${{ steps.cache-restore.outputs.cache-matched-key }}"
+        if [ -d "scripts/cache" ]; then
+          echo "Cache directory contents:"
+          ls -la scripts/cache/ || echo "Cache directory is empty"
+        else
+          echo "No cache directory found"
+        fi
+    
+    - name: Run website monitoring
+      env:
+        # Email configuration - these will be set as repository secrets
+        SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      run: |
+        cd scripts
+        python check_websites.py
+
+    - name: Generate dashboard
+      run: |
+        cd scripts
+        python generate_dashboard.py
+
+    - name: Show cache contents after monitoring
+      run: |
+        echo "Cache directory after monitoring:"
+        ls -la scripts/cache/ || echo "Cache directory not found"
+        if [ -f "scripts/cache/monitoring_history.json" ]; then
+          echo "Historical entries: $(jq length scripts/cache/monitoring_history.json)"
+        fi
+    
+    # Save updated data to cache
+    - name: Save monitoring cache
+      uses: actions/cache/save@v4
+      if: always()
+      with:
+        path: scripts/cache
+        key: monitoring-data-${{ github.run_number }}
+    
+    - name: Upload monitoring data and dashboard
+      if: always()  # Run even if the monitoring step fails
+      uses: actions/upload-artifact@v4
+      with:
+        name: monitoring-dashboard-${{ github.run_number }}
+        path: |
+          scripts/dashboard.html
+          scripts/cache/current_status.json
+          scripts/cache/monitoring_history.json
+        retention-days: 30

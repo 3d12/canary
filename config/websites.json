@@ -1,0 +1,20 @@
+{
+  "websites": [
+    {
+      "name": "Github",
+      "url": "http//github.com",
+      "timeout": 10,
+      "expected_status": 200,
+      "content_keywords": []
+    }
+  ],
+  "notification": {
+    "email": "email.to.send.alerts.to@your.email.provider",
+    "subject_prefix": "[WEBSITE ALERT]"
+  },
+  "settings": {
+    "retry_attempts": 2,
+    "retry_delay": 5,
+    "user_agent": "Canary/1.0"
+  }
+}

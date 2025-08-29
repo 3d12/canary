@@ -1,0 +1,12 @@
+[project]
+name = "canary"
+authors = [
+  { name="Nick Edner", email="nick@edner.dev" },
+]
+description = "Website health monitor using GitHub Actions as cloud hosting provider"
+dependencies = [
+  "requests",
+]
+requires-python = ">=3.12"
+license = { file="LICENSE.txt" }
+version = "1.0.0"
